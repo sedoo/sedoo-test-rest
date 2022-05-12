@@ -1,0 +1,81 @@
+spring:
+   application:
+       name: sedoo-test-rest
+   cloud:
+      discovery:
+         enabled: false
+
+springdoc:
+  swagger-ui.oauth.clientId: aeris-public
+  oAuthFlow:
+     authorizationUrl: https://sso.aeris-data.fr/auth/realms/aeris/protocol/openid-connect/auth
+     tokenUrl: https://sso.aeris-data.fr/auth/realms/aeris/protocol/openid-connect/token 
+
+---
+spring.profiles: prod
+
+resource.url.prefix:  https://api.sedoo.fr/${spring.application.name}/data/v1_0/
+
+
+
+springdoc:
+  swagger-ui:
+    configUrl: /${spring.application.name}/v3/api-docs/swagger-config
+    url: /${spring.application.name}/v3/api-docs/
+    oauth2RedirectUrl: https://api.sedoo.fr/${spring.application.name}/swagger-ui/oauth2-redirect.html
+  server.url:  https://api.sedoo.fr/${spring.application.name}
+
+
+spring:
+   cloud:
+      discovery:
+         enabled: true
+server:
+    port: 0
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:  http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
+    lease-renewal-interval-in-seconds: 3
+    lease-expiration-duration-in-seconds: 5
+    
+
+---
+spring.profiles: monitoring
+
+spring:
+   boot:
+       admin:
+           client:
+               url: https://monitoring.sedoo.fr
+               auto-deregistration: true
+
+info:
+  api: https://api.sedoo.fr/${spring.application.name}/swagger-ui/index.html
+
+endpoints:
+    enabled: true
+    health:
+        enabled: true
+    info:
+        enabled: true  
+        
+        
+management.info.env.enabled: true
+  
+management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+    endpoint:
+        info:
+            enabled: true
+        health:
+            show-details: "ALWAYS"
+            northstar:
+                cacheup: 240
+                cachedown: 120  
